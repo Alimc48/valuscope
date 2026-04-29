@@ -2,7 +2,7 @@
 
 > AI-powered startup valuation platform — DCF, Comparable Company, Cap Table, Exit Scenarios
 
-**🌐 Live Demo:** https://ghostwhistle.github.io/valuscope/
+**🌐 Live Demo:** https://alimc48.github.io/valuscope/
 
 ---
 
