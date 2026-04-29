@@ -49,7 +49,7 @@ ValuScope, girişimcilerin **"Şirketim ne kadar eder?"** sorusunu profesyonel f
 
 ## 🚀 Nasıl Kullanılır?
 
-1. **[ghostwhistle.github.io/valuscope](https://ghostwhistle.github.io/valuscope/)** adresine git
+1. **[alimc48.github.io/valuscope](https://alimc48.github.io/valuscope/)** adresine git
 2. Şirket bilgilerinizi, finansal verilerinizi ve cap table'ı girin
 3. **"Değerleme Analizini Başlat"** butonuna basın
 4. 4 farklı yöntemle değerleme + sensitivity + exit senaryoları
@@ -84,7 +84,7 @@ Halka açık verilerle test edilen şirketler:
 Pamukkale Üniversitesi'nde İngilizce İşletme öğrencisiyim. Akademik teori ile pratik araçlar arasındaki köprüyü kurmak istiyorum.
 
 Üç temel sorudan birine cevap veriyor:
-- ✅ "Pazara girmeli miyim?" → [Traction Scope](https://github.com/ghostwhistle/traction-scope)
+- ✅ "Pazara girmeli miyim?" → [Traction Scope](https://github.com/alimc48/traction-scope)
 - ✅ "Şirketim ne kadar eder?" → **ValuScope**
 - 🔜 "Müşteriye nasıl ulaşırım?" → Marketing Studio (geliştirme aşamasında)
 
@@ -101,7 +101,7 @@ Bu kod yalnızca görüntüleme amacıyla paylaşılmıştır. İzinsiz kopyalam
 ## 📬 İletişim
 
 - **LinkedIn:** [Alim Çeler](https://www.linkedin.com/in/alim%C3%A7eler/)
-- **GitHub:** [@ghostwhistle](https://github.com/ghostwhistle)
+- **GitHub:** [@alimc48](https://github.com/Alimc48)
 - **Konum:** Denizli, Türkiye
 
 ---
