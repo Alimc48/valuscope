@@ -100,7 +100,7 @@ Bu kod yalnızca görüntüleme amacıyla paylaşılmıştır. İzinsiz kopyalam
 
 ## 📬 İletişim
 
-- **LinkedIn:** [Alim Çeler](https://www.linkedin.com/in/alim-celer/)
+- **LinkedIn:** [Alim Çeler](https://www.linkedin.com/in/alim%C3%A7eler/)
 - **GitHub:** [@ghostwhistle](https://github.com/ghostwhistle)
 - **Konum:** Denizli, Türkiye
 
