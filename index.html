@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ValuScope — AI Startup Değerleme Platformu</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#05080a;--s1:#0a1014;--s2:#101820;--s3:#18222e;--s4:#202e3c;
+--b1:#1c2c38;--b2:#283a4a;--b3:#345060;
+--tx:#e8edf2;--tx2:#8a9ab0;--tx3:#5a6e82;
+--gold:#d4a853;--gold2:#c49a40;--goldL:rgba(212,168,83,.08);
+--green:#10b981;--emerald:#059669;--teal:#14b8a6;
+--blue:#3b82f6;--sky:#0ea5e9;--cyan:#06b6d4;
+--rose:#f43f5e;--red:#ef4444;--amber:#f59e0b;
+--g1:linear-gradient(135deg,#d4a853,#c49a40,#b8860b);
+--g2:linear-gradient(135deg,#10b981,#059669);
+--g3:linear-gradient(135deg,#3b82f6,#0ea5e9);
+}
+html.light{
+--bg:#f7f5f0;--s1:#ffffff;--s2:#f0ede6;--s3:#e6e2d8;--s4:#dcd7cc;
+--b1:#d0cbc0;--b2:#c0bab0;--b3:#b0a8a0;
+--tx:#1a1e24;--tx2:#4a5568;--tx3:#7a8898;
+}
+html{font-size:14.5px;scroll-behavior:smooth}
+body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;line-height:1.5;transition:background .4s,color .4s}
+
+/* BG */
+.bg-w{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-w .orb{position:absolute;border-radius:50%;filter:blur(140px);opacity:.03}
+.bg-w .orb.a{width:700px;height:700px;top:-250px;left:-150px;background:#d4a853}
+.bg-w .orb.b{width:500px;height:500px;bottom:-150px;right:-100px;background:#10b981}
+
+.app{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:1.5rem 1.2rem 4rem}
+
+/* Topbar */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:10px 20px;background:rgba(5,8,10,.75);backdrop-filter:blur(16px);border-bottom:1px solid rgba(28,44,56,.5)}
+html.light .topbar{background:rgba(247,245,240,.85)}
+.theme-tog{width:36px;height:20px;border-radius:10px;border:1.5px solid var(--b1);background:var(--s2);cursor:pointer;position:relative;transition:all .3s;display:flex;align-items:center;padding:0 2px}
+.theme-tog .tog-dot{width:14px;height:14px;border-radius:50%;background:var(--g1);transition:transform .3s;font-size:8px;display:flex;align-items:center;justify-content:center}
+html.light .theme-tog .tog-dot{transform:translateX(16px)}
+.cur-sel select,.lang-sel .lb{font-family:'Manrope';font-size:11.5px;font-weight:600}
+.cur-sel{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--b1);background:var(--s1)}
+.cur-sel select{padding:5px 10px;border:none;background:transparent;color:var(--tx2);cursor:pointer;outline:none;appearance:none}
+.cur-sel select option{background:var(--s2);color:var(--tx)}
+.lang-sel{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--b1);background:var(--s1)}
+.lb{padding:5px 12px;border:none;cursor:pointer;background:transparent;color:var(--tx3);transition:all .25s}
+.lb.on{background:var(--g1);color:#fff}
+
+/* Header */
+.hdr{text-align:center;margin:3.5rem 0 2rem;animation:fu .7s ease}
+.hdr-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.12em;background:var(--goldL);color:var(--gold);border:1px solid rgba(212,168,83,.15);margin-bottom:12px}
+.hdr-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.logo-r{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px}
+.logo-m{width:52px;height:52px;border-radius:15px;background:var(--g1);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(212,168,83,.2);position:relative;overflow:hidden}
+.logo-m::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.15) 50%,transparent 60%);animation:shine 4s infinite}
+@keyframes shine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.logo-m svg{width:26px;height:26px;fill:#fff;position:relative;z-index:1}
+.logo-t{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--gold)}
+.hdr>p{color:var(--tx2);font-size:13px;max-width:560px;margin:0 auto;line-height:1.7}
+
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes si{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Steps */
+.steps{display:flex;justify-content:center;align-items:center;margin-bottom:2rem}
+.st-d{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono';font-size:13px;font-weight:600;border:2px solid var(--b1);color:var(--tx3);background:var(--s1);cursor:pointer;transition:all .35s}
+.st-d.on{border-color:var(--gold);color:#fff;background:var(--gold2);box-shadow:0 0 20px rgba(212,168,83,.2)}
+.st-d.done{border-color:var(--green);color:#fff;background:var(--green)}
+.st-line{width:48px;height:2px;background:var(--b1);margin:0 4px;transition:background .4s}
+.st-line.done{background:var(--green)}
+.st-lb{font-size:10px;color:var(--tx3);text-align:center;margin-top:4px;font-weight:500}
+
+/* Panels */
+.pnl{display:none;animation:si .35s ease}.pnl.on{display:block}
+.sec-t{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;margin-bottom:4px}
+.sec-d{color:var(--tx2);font-size:12.5px;margin-bottom:1.4rem}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.fg-full{grid-column:1/-1}
+.ig label{display:block;font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.ig input,.ig select,.ig textarea{width:100%;padding:9px 12px;border-radius:9px;border:1.5px solid var(--b1);background:var(--s2);color:var(--tx);font-family:'Manrope';font-size:13.5px;outline:none;transition:all .3s}
+.ig input:focus,.ig select:focus,.ig textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,83,.07)}
+.ig input::placeholder,.ig textarea::placeholder{color:var(--tx3)}
+.ig .ht{font-size:10.5px;color:var(--tx3);margin-top:2px}
+.ig select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%235a6e82' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.ig select option{background:var(--s2);color:var(--tx)}
+.ig textarea{resize:vertical;min-height:70px}
+.cur-input{position:relative}
+.cur-input .cur-pre{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:600;color:var(--tx3);pointer-events:none}
+.cur-input input{padding-left:30px}
+
+/* Slider */
+.sl-w{display:flex;align-items:center;gap:10px}
+.sl-w input[type=range]{flex:1;-webkit-appearance:none;height:5px;border-radius:3px;outline:none;cursor:pointer;background:var(--b1)}
+.sl-w input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);cursor:pointer;box-shadow:0 2px 8px rgba(212,168,83,.3)}
+.sl-v{font-family:'IBM Plex Mono';font-size:13px;font-weight:700;color:var(--gold);min-width:26px;text-align:center}
+
+/* Buttons */
+.nav-r{display:flex;justify-content:space-between;margin-top:1.6rem;gap:10px}
+.btn{padding:9px 22px;border-radius:11px;font-family:'Manrope';font-size:13.5px;font-weight:600;cursor:pointer;transition:all .3s;border:none;display:inline-flex;align-items:center;gap:7px}
+.btn-b{background:transparent;border:1.5px solid var(--b1);color:var(--tx2)}
+.btn-b:hover{border-color:var(--gold);color:var(--tx)}
+.btn-n{background:var(--g1);color:#fff;box-shadow:0 5px 20px rgba(212,168,83,.2)}
+.btn-n:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(212,168,83,.3)}
+.btn-a{background:var(--g1);color:#fff;box-shadow:0 8px 32px rgba(212,168,83,.25);font-size:15px;padding:12px 32px}
+
+/* Loading */
+.ld-ov{display:none;position:fixed;inset:0;z-index:200;background:rgba(5,8,10,.96);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:18px}
+.ld-ov.show{display:flex}
+.ld-sp{width:64px;height:64px;border-radius:50%;border:3px solid var(--b1);border-top-color:var(--gold);animation:spin .75s linear infinite}
+.ld-tx{color:var(--tx2);font-size:13.5px}
+.ld-st{display:flex;flex-direction:column;gap:5px}
+.ls{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--tx3);transition:all .5s}
+.ls.ok{color:var(--green)}
+.ls .ck{width:16px;height:16px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:8px;transition:all .5s}
+.ls.ok .ck{background:rgba(16,185,129,.1)}
+
+/* Results */
+.res{display:none;animation:fu .5s ease}.res.show{display:block}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:1.6rem;margin-bottom:1rem;position:relative;overflow:hidden;transition:border-color .3s}
+.card:hover{border-color:var(--b2)}
+.card-ac{position:absolute;top:0;left:0;right:0;height:3px;background:var(--g1)}
+.card-t{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;margin-bottom:.7rem;display:flex;align-items:center;gap:7px}
+.card-sub{font-size:11.5px;color:var(--tx3);margin-bottom:.8rem}
+
+/* Hero */
+.hero{text-align:center;padding:2.2rem 1.5rem}
+.hero-name{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;margin-bottom:3px}
+.hero-meta{color:var(--tx2);font-size:12.5px;margin-bottom:1.3rem}
+.val-display{margin:1.5rem 0}
+.val-main{font-family:'IBM Plex Mono';font-size:3.2rem;font-weight:700;color:var(--gold);line-height:1}
+.val-label{font-size:13px;color:var(--tx2);margin-top:4px}
+.val-range{font-size:14px;color:var(--tx3);margin-top:8px}
+.val-range span{color:var(--tx);font-weight:600}
+
+/* Method cards */
+.method-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-bottom:1rem}
+.m-card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.2rem;transition:all .3s}
+.m-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.m-card .m-icon{font-size:1.3rem;margin-bottom:6px}
+.m-card .m-name{font-size:12px;font-weight:700;color:var(--tx2);margin-bottom:6px}
+.m-card .m-val{font-family:'IBM Plex Mono';font-size:1.4rem;font-weight:700;margin-bottom:4px}
+.m-card .m-desc{font-size:11px;color:var(--tx3);line-height:1.4}
+
+/* Cap Table */
+.cap-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
+.cap-table th{padding:8px 10px;text-align:left;font-weight:600;color:var(--tx3);border-bottom:1px solid var(--b1);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.cap-table td{padding:7px 10px;border-bottom:1px solid rgba(28,44,56,.3);color:var(--tx2)}
+.cap-table tr:hover td{background:rgba(212,168,83,.02)}
+
+/* Pie chart */
+.pie-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;justify-content:center}
+.pie-legend-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--tx2)}
+.pie-legend-item .pl-dot{width:10px;height:10px;border-radius:3px}
+
+/* G2 grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:720px){.g2{grid-template-columns:1fr}}
+
+/* AI */
+.ai-b{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:1.6rem;margin-bottom:1rem;position:relative;overflow:hidden}
+.ai-b::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--g1)}
+.ai-txt{color:var(--tx2);font-size:13px;line-height:1.85;white-space:pre-line}
+.ai-loading{display:flex;align-items:center;gap:10px;padding:1.2rem;color:var(--tx2);font-size:12.5px}
+.ai-spin{width:18px;height:18px;border-radius:50%;border:2px solid var(--b1);border-top-color:var(--gold);animation:spin .8s linear infinite}
+
+/* Chat */
+.ai-chat{border-top:1px solid var(--b1);margin-top:14px;padding-top:14px}
+.ai-chat-messages{max-height:200px;overflow-y:auto;margin-bottom:10px}
+.ai-msg{padding:8px 12px;border-radius:10px;margin-bottom:6px;font-size:12px;line-height:1.6;max-width:85%}
+.ai-msg.user{background:var(--gold2);color:#fff;margin-left:auto;border-bottom-right-radius:3px}
+.ai-msg.bot{background:var(--s2);color:var(--tx2);border-bottom-left-radius:3px}
+.ai-chat-input{display:flex;gap:6px}
+.ai-chat-input input{flex:1;padding:8px 12px;border-radius:8px;border:1.5px solid var(--b1);background:var(--s2);color:var(--tx);font-family:'Manrope';font-size:12px;outline:none}
+.ai-chat-input button{padding:8px 14px;border-radius:8px;border:none;background:var(--g1);color:#fff;font-family:'Manrope';font-size:12px;font-weight:600;cursor:pointer}
+.ai-chat-suggest{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.ai-chat-suggest button{padding:4px 10px;border-radius:6px;border:1px solid var(--b1);background:transparent;color:var(--tx3);font-family:'Manrope';font-size:10.5px;cursor:pointer;transition:all .2s}
+.ai-chat-suggest button:hover{border-color:var(--gold);color:var(--gold)}
+
+.acts{display:flex;justify-content:center;gap:10px;margin-top:1.5rem;flex-wrap:wrap}
+.ftr{text-align:center;margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--b1);color:var(--tx3);font-size:11px}
+
+@media(max-width:640px){html{font-size:13.5px}.fg,.method-grid{grid-template-columns:1fr}.app{padding:1rem .8rem 3rem}}
+@media print{.topbar,.acts,.btn{display:none!important}.bg-w{display:none!important}.card,.ai-b{break-inside:avoid}}
+
+/* Sensitivity */
+.sens-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sens-label{width:110px;font-size:11px;font-weight:600;color:var(--tx3);text-align:right;flex-shrink:0}
+.sens-slider{flex:1;-webkit-appearance:none;height:5px;border-radius:3px;background:var(--b1);cursor:pointer;outline:none}
+.sens-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer}
+.sens-val{font-family:'IBM Plex Mono';font-size:12px;font-weight:600;color:var(--gold);min-width:55px;text-align:center}
+.sens-result{text-align:center;margin-top:14px;padding:16px;background:var(--s2);border-radius:12px}
+.sens-result .sr-val{font-family:'IBM Plex Mono';font-size:2rem;font-weight:700;color:var(--gold)}
+.sens-result .sr-delta{font-size:13px;margin-top:4px}
+
+/* Funding Rounds */
+.fund-timeline{position:relative;padding:10px 0 10px 30px}
+.fund-timeline::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:2px;background:var(--b1)}
+.fund-round{position:relative;margin-bottom:16px;padding:14px;background:var(--s2);border:1px solid var(--b1);border-radius:12px}
+.fund-round::before{content:'';position:absolute;left:-24px;top:18px;width:12px;height:12px;border-radius:50%;border:2px solid var(--gold);background:var(--s1)}
+.fund-round.active::before{background:var(--gold)}
+.fund-round .fr-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.fund-round .fr-name{font-size:13px;font-weight:700}
+.fund-round .fr-val{font-family:'IBM Plex Mono';font-size:14px;font-weight:700;color:var(--gold)}
+.fund-round .fr-details{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:11px;color:var(--tx2)}
+.fund-round .fr-detail{background:var(--s3);border-radius:6px;padding:6px 8px;text-align:center}
+.fund-round .fr-detail .fd-val{font-family:'IBM Plex Mono';font-weight:600;color:var(--tx)}
+.fr-bar{height:6px;border-radius:3px;background:var(--b1);margin-top:8px;overflow:hidden}
+.fr-bar-fill{height:100%;border-radius:3px;transition:width 1s}
+
+/* Exit Scenarios */
+.exit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.exit-card{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:16px;text-align:center;transition:all .3s}
+.exit-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.exit-card .ex-icon{font-size:2rem;margin-bottom:6px}
+.exit-card .ex-name{font-size:13px;font-weight:700;margin-bottom:8px}
+.exit-card .ex-val{font-family:'IBM Plex Mono';font-size:1.4rem;font-weight:700;margin-bottom:4px}
+.exit-card .ex-detail{font-size:11px;color:var(--tx2);line-height:1.5}
+.exit-card .ex-roi{display:inline-block;margin-top:6px;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700}
+
+/* Benchmark */
+.bench-row2{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bench-lbl2{width:130px;font-size:11px;font-weight:600;color:var(--tx3);text-align:right;flex-shrink:0}
+.bench-track2{flex:1;height:24px;background:var(--s2);border-radius:5px;position:relative;overflow:hidden}
+.bench-marker{position:absolute;height:100%;width:3px;background:var(--gold);z-index:2}
+.bench-range{position:absolute;height:100%;border-radius:5px;opacity:.25}
+.bench-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;border:2px solid #fff;z-index:3}
+
+@media(max-width:640px){.exit-grid{grid-template-columns:1fr}.fund-round .fr-details{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="bg-w"><div class="orb a"></div><div class="orb b"></div></div>
+
+<div class="topbar">
+  <div class="theme-tog" onclick="toggleTheme()"><div class="tog-dot">☀</div></div>
+  <div class="cur-sel"><select id="curSel" onchange="setCurrency(this.value)">
+    <option value="USD">$ USD</option><option value="EUR">€ EUR</option><option value="TRY">₺ TRY</option>
+    <option value="GBP">£ GBP</option><option value="JPY">¥ JPY</option><option value="AED">د.إ AED</option>
+    <option value="SAR">﷼ SAR</option><option value="KRW">₩ KRW</option><option value="INR">₹ INR</option>
+    <option value="CNY">¥ CNY</option><option value="BRL">R$ BRL</option><option value="RUB">₽ RUB</option>
+  </select></div>
+  <div class="lang-sel">
+    <button class="lb on" onclick="setLang('tr')">🇹🇷 TR</button>
+    <button class="lb" onclick="setLang('en')">🇬🇧 EN</button>
+  </div>
+</div>
+
+<div class="app">
+  <header class="hdr" id="hdrBlock">
+    <div class="hdr-tag"><span class="dot"></span><span data-i="badge"></span></div>
+    <div class="logo-r">
+      <div class="logo-m"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+      <div class="logo-t">ValuScope</div>
+    </div>
+    <p data-i="subtitle"></p>
+  </header>
+
+  <!-- Stepper -->
+  <div class="steps" id="stepperBlock">
+    <div><div class="st-d on" onclick="goStep(0)">1</div><div class="st-lb" data-i="s1"></div></div>
+    <div class="st-line"></div>
+    <div><div class="st-d" onclick="goStep(1)">2</div><div class="st-lb" data-i="s2"></div></div>
+    <div class="st-line"></div>
+    <div><div class="st-d" onclick="goStep(2)">3</div><div class="st-lb" data-i="s3"></div></div>
+  </div>
+
+  <!-- STEP 0: Company Info -->
+  <div class="pnl on" id="p0">
+    <div class="sec-t" data-i="t1"></div><div class="sec-d" data-i="t1d"></div>
+    <div class="fg">
+      <div class="ig"><label data-i="compName"></label><input id="compName" data-ph="ph_comp"></div>
+      <div class="ig"><label data-i="sector"></label><select id="sector"></select></div>
+      <div class="ig"><label data-i="stage"></label><select id="stage"></select></div>
+      <div class="ig"><label data-i="country"></label><input id="country" data-ph="ph_country"></div>
+      <div class="ig fg-full"><label data-i="desc"></label><textarea id="compDesc" rows="2" data-ph="ph_desc"></textarea></div>
+      <div class="ig"><label data-i="founded"></label><input type="number" id="founded" data-ph="ph_founded"></div>
+      <div class="ig"><label data-i="employees"></label><input type="number" id="employees" data-ph="ph_emp"></div>
+    </div>
+    <div class="nav-r"><div></div><button class="btn btn-n" onclick="goStep(1)" data-i="next"></button></div>
+  </div>
+
+  <!-- STEP 1: Financials -->
+  <div class="pnl" id="p1">
+    <div class="sec-t" data-i="t2"></div><div class="sec-d" data-i="t2d"></div>
+    <div class="fg">
+      <div class="ig"><label data-i="revenue"></label><div class="cur-input"><span class="cur-pre" id="cp1">$</span><input type="number" id="revenue" data-ph="ph_rev"></div></div>
+      <div class="ig"><label data-i="revGrowth"></label><input type="number" id="revGrowth" data-ph="ph_revg" step="0.1"><div class="ht" data-i="ht_revg"></div></div>
+      <div class="ig"><label data-i="grossMargin"></label><input type="number" id="grossMargin" data-ph="ph_gm" step="0.1"></div>
+      <div class="ig"><label data-i="netIncome"></label><div class="cur-input"><span class="cur-pre" id="cp2">$</span><input type="number" id="netIncome" data-ph="ph_ni"></div></div>
+      <div class="ig"><label data-i="ebitda"></label><div class="cur-input"><span class="cur-pre" id="cp3">$</span><input type="number" id="ebitda" data-ph="ph_ebitda"></div></div>
+      <div class="ig"><label data-i="cashFlow"></label><div class="cur-input"><span class="cur-pre" id="cp4">$</span><input type="number" id="cashFlow" data-ph="ph_cf"></div></div>
+      <div class="ig"><label data-i="totalAssets"></label><div class="cur-input"><span class="cur-pre" id="cp5">$</span><input type="number" id="totalAssets" data-ph="ph_assets"></div></div>
+      <div class="ig"><label data-i="totalDebt"></label><div class="cur-input"><span class="cur-pre" id="cp6">$</span><input type="number" id="totalDebt" data-ph="ph_debt"></div></div>
+    </div>
+    <div class="nav-r"><button class="btn btn-b" onclick="goStep(0)" data-i="back"></button><button class="btn btn-n" onclick="goStep(2)" data-i="next"></button></div>
+  </div>
+
+  <!-- STEP 2: Investment & Cap Table -->
+  <div class="pnl" id="p2">
+    <div class="sec-t" data-i="t3"></div><div class="sec-d" data-i="t3d"></div>
+    <div class="fg">
+      <div class="ig"><label data-i="lastRaise"></label><div class="cur-input"><span class="cur-pre" id="cp7">$</span><input type="number" id="lastRaise" data-ph="ph_raise"></div><div class="ht" data-i="ht_raise"></div></div>
+      <div class="ig"><label data-i="lastValuation"></label><div class="cur-input"><span class="cur-pre" id="cp8">$</span><input type="number" id="lastValuation" data-ph="ph_lastval"></div></div>
+      <div class="ig"><label data-i="founderPct"></label><input type="number" id="founderPct" data-ph="ph_fpct" step="0.1" max="100"></div>
+      <div class="ig"><label data-i="investorPct"></label><input type="number" id="investorPct" data-ph="ph_ipct" step="0.1" max="100"></div>
+      <div class="ig"><label data-i="esopPct"></label><input type="number" id="esopPct" data-ph="ph_esop" step="0.1" max="100"></div>
+      <div class="ig"><label data-i="newRaise"></label><div class="cur-input"><span class="cur-pre" id="cp9">$</span><input type="number" id="newRaise" data-ph="ph_newraise"></div><div class="ht" data-i="ht_new"></div></div>
+      <div class="ig"><label data-i="discountRate"></label><input type="number" id="discountRate" value="15" step="0.5"><div class="ht" data-i="ht_wacc"></div></div>
+      <div class="ig"><label data-i="termGrowth"></label><input type="number" id="termGrowth" value="3" step="0.5"><div class="ht" data-i="ht_tg"></div></div>
+    </div>
+    <div class="nav-r"><button class="btn btn-b" onclick="goStep(1)" data-i="back"></button><button class="btn btn-a" onclick="runAnalysis()" data-i="analyzeBtn"></button></div>
+  </div>
+
+  <!-- Loading -->
+  <div class="ld-ov" id="loading">
+    <div class="ld-sp"></div>
+    <div class="ld-tx" data-i="ld"></div>
+    <div class="ld-st" id="ldSteps"></div>
+  </div>
+
+  <div class="res" id="results"></div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+// CURRENCY
+// ════════════════════════════════════════════════
+const CURRENCIES={USD:{s:'$',r:1},EUR:{s:'€',r:0.92},TRY:{s:'₺',r:34.2},GBP:{s:'£',r:0.79},JPY:{s:'¥',r:154},AED:{s:'د.إ',r:3.67},SAR:{s:'﷼',r:3.75},KRW:{s:'₩',r:1380},INR:{s:'₹',r:83.5},CNY:{s:'¥',r:7.25},BRL:{s:'R$',r:5.05},RUB:{s:'₽',r:92}};
+let CUR='USD';
+function setCurrency(c){CUR=c;document.querySelectorAll('.cur-pre').forEach(el=>el.textContent=CURRENCIES[c].s);if(document.getElementById('results').classList.contains('show'))renderResults();}
+function fc(usd){const c=CURRENCIES[CUR];if(Math.abs(usd)>=1e9)return c.s+(usd*c.r/1e9).toFixed(1)+'B';if(Math.abs(usd)>=1e6)return c.s+(usd*c.r/1e6).toFixed(1)+'M';if(Math.abs(usd)>=1e3)return c.s+Math.round(usd*c.r/1e3)+'K';return c.s+Math.round(usd*c.r).toLocaleString();}
+
+// ════════════════════════════════════════════════
+// i18n
+// ════════════════════════════════════════════════
+let LANG='tr';
+const qs=s=>document.querySelector(s);const qa=s=>document.querySelectorAll(s);
+
+const I={
+tr:{
+badge:"YAPAY ZEKA DEĞERLEMESİ",
+subtitle:"Startup'ınızın değerini yapay zeka ile hesaplayın. DCF, Comparable Company, Revenue Multiple ve Stage-Based değerleme yöntemleriyle kapsamlı analiz.",
+s1:"Şirket Bilgileri",s2:"Finansallar",s3:"Yatırım & Ortaklık",
+t1:"Şirket Bilgileri",t1d:"Değerlenecek startup/şirketin temel bilgilerini girin.",
+compName:"Şirket / Startup Adı",ph_comp:"ör. TechVenture",
+sector:"Sektör",sel:"Seçiniz...",
+sectors:[["tech","Teknoloji / SaaS"],["fintech","FinTech"],["ecom","E-Ticaret"],["health","HealthTech"],["edu","EdTech"],["food","FoodTech"],["logistics","Lojistik"],["energy","Enerji / CleanTech"],["ai","Yapay Zeka / AI"],["gaming","Oyun / Gaming"],["social","Sosyal Medya"],["marketplace","Pazar Yeri"],["other","Diğer"]],
+stage:"Şirket Aşaması",stages:[["preseed","Pre-Seed (Fikir aşaması)"],["seed","Seed (Erken aşama)"],["seriesA","Series A"],["seriesB","Series B"],["seriesC","Series C+"],["growth","Growth / Late Stage"],["profitable","Kârlı / Bootstrapped"]],
+country:"Ülke",ph_country:"ör. Türkiye",
+desc:"Kısa Açıklama",ph_desc:"Ne yapıyor? Benzersiz değer önerisi nedir?",
+founded:"Kuruluş Yılı",ph_founded:"ör. 2023",
+employees:"Çalışan Sayısı",ph_emp:"ör. 12",
+t2:"Finansal Veriler",t2d:"Son 12 aylık (TTM) finansal verileri girin. Bilinmeyen alanları boş bırakabilirsiniz.",
+revenue:"Yıllık Gelir (ARR)",ph_rev:"ör. 500000",
+revGrowth:"Yıllık Gelir Büyümesi (%)",ph_revg:"ör. 120",ht_revg:"Yıldan yıla (YoY) büyüme oranı",
+grossMargin:"Brüt Kâr Marjı (%)",ph_gm:"ör. 70",
+netIncome:"Net Kâr / Zarar",ph_ni:"ör. -100000 (zarar için negatif)",
+ebitda:"EBITDA",ph_ebitda:"ör. 50000",
+cashFlow:"Serbest Nakit Akışı (FCF)",ph_cf:"ör. 30000",
+totalAssets:"Toplam Varlıklar",ph_assets:"ör. 800000",
+totalDebt:"Toplam Borç",ph_debt:"ör. 200000",
+t3:"Yatırım & Ortaklık Yapısı",t3d:"Mevcut ve planlanan yatırım turlarını ve ortaklık yapısını girin.",
+lastRaise:"Son Yatırım Turu Tutarı",ph_raise:"ör. 1000000",ht_raise:"En son alınan yatırım miktarı",
+lastValuation:"Son Değerleme (Post-Money)",ph_lastval:"ör. 5000000",
+founderPct:"Kurucu Payı (%)",ph_fpct:"ör. 60",
+investorPct:"Yatırımcı Payı (%)",ph_ipct:"ör. 30",
+esopPct:"ESOP / Çalışan Havuzu (%)",ph_esop:"ör. 10",
+newRaise:"Planlanan Yeni Yatırım",ph_newraise:"ör. 2000000",ht_new:"Yeni turda hedeflenen yatırım tutarı",
+discountRate:"İskonto Oranı (WACC %)",ht_wacc:"Genellikle startup'lar için %15-30 arası",
+termGrowth:"Terminal Büyüme (%)",ht_tg:"Uzun vadeli sürdürülebilir büyüme (genellikle %2-4)",
+next:"Devam →",back:"← Geri",analyzeBtn:"💎 Değerleme Analizi Başlat",
+ld:"Yapay zeka değerleme analizi yapıyor...",
+ls:["DCF modeli hesaplanıyor","Comparable Company analizi yapılıyor","Revenue Multiple değerlemesi","Stage-Based değerleme","Cap Table & dilution simülasyonu","Yatırımcı getiri analizi","Yapay zeka değerleme raporu hazırlanıyor"],
+rpt:"Değerleme Raporu",
+valTitle:"Tahmini Şirket Değeri",valRange:"Değerleme Aralığı",
+methodsTitle:"Değerleme Yöntemleri",
+mNames:["DCF (İndirgenmiş Nakit Akışı)","Comparable Company","Revenue Multiple","Stage-Based"],
+mDescs:["Gelecek nakit akışlarının bugünkü değeri","Benzer şirketlerin çarpanlarıyla kıyaslama","Gelir çarpanı ile değerleme","Aşamaya göre tipik değerleme aralığı"],
+capTitle:"Ortaklık Yapısı (Cap Table)",capBefore:"Mevcut Durum",capAfter:"Yeni Yatırım Sonrası",
+capHeaders:["Ortak","Pay (%)","Değer"],
+capFounder:"Kurucu(lar)",capInvestor:"Mevcut Yatırımcılar",capEsop:"ESOP / Çalışan",capNew:"Yeni Yatırımcı",
+dilTitle:"Seyreltme (Dilution) Analizi",dilBefore:"Önce",dilAfter:"Sonra",dilLost:"Seyreltme",
+invTitle:"Yatırımcı Getiri Analizi",invHeaders:["Metrik","Değer"],
+invROI:"Tahmini ROI (3 yıl)",invIRR:"Tahmini IRR",invMultiple:"Getiri Çarpanı",invPayback:"Geri Ödeme Süresi",
+aiTitle:"Yapay Zeka Değerleme Raporu",aiSub:"Tüm verileriniz analiz edildi ve kapsamlı değerleme raporu oluşturuldu.",
+aiLoading:"Yapay zeka değerleme raporu oluşturuyor...",
+aiChatTitle:"Yapay Zeka Soru-Cevap",aiChatSub:"Değerleme hakkında soru sorun",aiChatSend:"Sor",aiChatPh:"ör. Neden bu değerleme çıktı?",
+aiChatSuggestions:["Bu değer gerçekçi mi?","Değerlemeyi nasıl artırabilirim?","Hangi yöntem en güvenilir?","Yatırımcılar ne bekler?","Dilution çok mu fazla?"],
+btnExport:"PDF İndir",btnReset:"Yeni Değerleme",
+footer1:"Geliştiren: <strong>Alim Çeler</strong> • ValuScope — Yapay Zeka Destekli Startup Değerleme Platformu",
+footer2:"DCF • Comparable Company • Revenue Multiple • Stage-Based • Cap Table • Dilution • Yapay Zeka Raporu",
+// New modules
+sensTitle:"Sensitivity (Duyarlılık) Analizi",sensSub:"Değişkenleri kaydırarak değerlemenin nasıl değiştiğini görün",
+sensLabels:["Gelir Büyümesi (%)","Brüt Marj (%)","İskonto Oranı (%)","Terminal Büyüme (%)"],
+sensResult:"Ayarlanmış Değerleme",sensDelta:"fark",
+fundTitle:"Funding Simülasyonu — Yatırım Turları",fundSub:"Seed'den Series C'ye her turda ortaklık nasıl değişir",
+fundRounds:["Pre-Seed","Seed","Series A","Series B","Series C"],
+fundRaise:"Yatırım",fundValuation:"Değerleme",fundDilution:"Seyreltme",fundFounder:"Kurucu Payı",
+dcfTitle:"DCF Projeksiyon Grafiği (5 Yıl)",dcfSub:"İndirgenmiş nakit akışı yıl bazında görselleştirme",
+dcfLabels:["Gelir","FCF","İndirgenmiş FCF"],dcfTerminal:"Terminal Değer",
+benchTitle2:"Sektör Değerleme Benchmark",benchSub2:"Sizin çarpanınız sektör aralığıyla kıyaslanıyor",
+benchMetrics:["Gelir Çarpanı (x)","EV/EBITDA","Büyüme Oranı (%)","Brüt Marj (%)"],
+benchYou2:"Siz",benchRange:"Sektör Aralığı",
+exitTitle:"Exit (Çıkış) Senaryo Analizi",exitSub:"Farklı çıkış stratejilerinde beklenen getiri",
+exitNames:["IPO (Halka Arz)","Acquisition (Satın Alma)","Secondary Sale"],
+exitDescs:["Halka arz ile maksimum değerleme","Stratejik alıcıya satış","İkincil piyasada pay satışı"],
+},
+en:{
+badge:"AI VALUATION",
+subtitle:"Calculate your startup's value with AI. Comprehensive analysis using DCF, Comparable Company, Revenue Multiple, and Stage-Based valuation methods.",
+s1:"Company Info",s2:"Financials",s3:"Investment & Cap",
+t1:"Company Information",t1d:"Enter the basic details of the startup/company to be valued.",
+compName:"Company / Startup Name",ph_comp:"e.g. TechVenture",
+sector:"Industry",sel:"Select...",
+sectors:[["tech","Technology / SaaS"],["fintech","FinTech"],["ecom","E-Commerce"],["health","HealthTech"],["edu","EdTech"],["food","FoodTech"],["logistics","Logistics"],["energy","Energy / CleanTech"],["ai","Artificial Intelligence / AI"],["gaming","Gaming"],["social","Social Media"],["marketplace","Marketplace"],["other","Other"]],
+stage:"Company Stage",stages:[["preseed","Pre-Seed (Idea stage)"],["seed","Seed (Early stage)"],["seriesA","Series A"],["seriesB","Series B"],["seriesC","Series C+"],["growth","Growth / Late Stage"],["profitable","Profitable / Bootstrapped"]],
+country:"Country",ph_country:"e.g. United States",
+desc:"Short Description",ph_desc:"What does it do? What's the unique value proposition?",
+founded:"Year Founded",ph_founded:"e.g. 2023",
+employees:"Number of Employees",ph_emp:"e.g. 12",
+t2:"Financial Data",t2d:"Enter the trailing 12 months (TTM) financial data. Leave unknown fields empty.",
+revenue:"Annual Revenue (ARR)",ph_rev:"e.g. 500000",
+revGrowth:"Annual Revenue Growth (%)",ph_revg:"e.g. 120",ht_revg:"Year-over-year (YoY) growth rate",
+grossMargin:"Gross Profit Margin (%)",ph_gm:"e.g. 70",
+netIncome:"Net Income / Loss",ph_ni:"e.g. -100000 (negative for loss)",
+ebitda:"EBITDA",ph_ebitda:"e.g. 50000",
+cashFlow:"Free Cash Flow (FCF)",ph_cf:"e.g. 30000",
+totalAssets:"Total Assets",ph_assets:"e.g. 800000",
+totalDebt:"Total Debt",ph_debt:"e.g. 200000",
+t3:"Investment & Cap Table",t3d:"Enter current and planned investment rounds and ownership structure.",
+lastRaise:"Last Funding Round Amount",ph_raise:"e.g. 1000000",ht_raise:"Most recent investment amount",
+lastValuation:"Last Valuation (Post-Money)",ph_lastval:"e.g. 5000000",
+founderPct:"Founder Ownership (%)",ph_fpct:"e.g. 60",
+investorPct:"Investor Ownership (%)",ph_ipct:"e.g. 30",
+esopPct:"ESOP / Employee Pool (%)",ph_esop:"e.g. 10",
+newRaise:"Planned New Raise",ph_newraise:"e.g. 2000000",ht_new:"Target investment amount for new round",
+discountRate:"Discount Rate (WACC %)",ht_wacc:"Typically 15-30% for startups",
+termGrowth:"Terminal Growth (%)",ht_tg:"Long-term sustainable growth (usually 2-4%)",
+next:"Continue →",back:"← Back",analyzeBtn:"💎 Run Valuation Analysis",
+ld:"AI is performing valuation analysis...",
+ls:["Computing DCF model","Running Comparable Company analysis","Revenue Multiple valuation","Stage-Based valuation","Cap Table & dilution simulation","Investor return analysis","Preparing AI valuation report"],
+rpt:"Valuation Report",
+valTitle:"Estimated Company Value",valRange:"Valuation Range",
+methodsTitle:"Valuation Methods",
+mNames:["DCF (Discounted Cash Flow)","Comparable Company","Revenue Multiple","Stage-Based"],
+mDescs:["Present value of future cash flows","Comparison with similar company multiples","Revenue multiplier valuation","Typical valuation range by stage"],
+capTitle:"Cap Table (Ownership Structure)",capBefore:"Current State",capAfter:"Post New Investment",
+capHeaders:["Stakeholder","Share (%)","Value"],
+capFounder:"Founder(s)",capInvestor:"Existing Investors",capEsop:"ESOP / Employees",capNew:"New Investor",
+dilTitle:"Dilution Analysis",dilBefore:"Before",dilAfter:"After",dilLost:"Dilution",
+invTitle:"Investor Return Analysis",invHeaders:["Metric","Value"],
+invROI:"Estimated ROI (3 yr)",invIRR:"Estimated IRR",invMultiple:"Return Multiple",invPayback:"Payback Period",
+aiTitle:"AI Valuation Report",aiSub:"All your data has been analyzed and a comprehensive valuation report was generated.",
+aiLoading:"AI is generating valuation report...",
+aiChatTitle:"AI Q&A",aiChatSub:"Ask questions about the valuation",aiChatSend:"Ask",aiChatPh:"e.g. Why this valuation?",
+aiChatSuggestions:["Is this valuation realistic?","How can I increase valuation?","Which method is most reliable?","What do investors expect?","Is dilution too high?"],
+btnExport:"Download PDF",btnReset:"New Valuation",
+footer1:"Built by <strong>Alim Çeler</strong> • ValuScope — AI-Powered Startup Valuation Platform",
+footer2:"DCF • Comparable Company • Revenue Multiple • Stage-Based • Cap Table • Dilution • AI Report",
+sensTitle:"Sensitivity Analysis",sensSub:"Slide variables to see how valuation changes",
+sensLabels:["Revenue Growth (%)","Gross Margin (%)","Discount Rate (%)","Terminal Growth (%)"],
+sensResult:"Adjusted Valuation",sensDelta:"difference",
+fundTitle:"Funding Simulation — Investment Rounds",fundSub:"See how ownership changes from Seed to Series C",
+fundRounds:["Pre-Seed","Seed","Series A","Series B","Series C"],
+fundRaise:"Raise",fundValuation:"Valuation",fundDilution:"Dilution",fundFounder:"Founder Share",
+dcfTitle:"DCF Projection Chart (5 Years)",dcfSub:"Discounted cash flow visualized year by year",
+dcfLabels:["Revenue","FCF","Discounted FCF"],dcfTerminal:"Terminal Value",
+benchTitle2:"Industry Valuation Benchmark",benchSub2:"Your multiples compared to industry range",
+benchMetrics:["Revenue Multiple (x)","EV/EBITDA","Growth Rate (%)","Gross Margin (%)"],
+benchYou2:"You",benchRange:"Industry Range",
+exitTitle:"Exit Scenario Analysis",exitSub:"Expected returns under different exit strategies",
+exitNames:["IPO (Public Offering)","Acquisition (M&A)","Secondary Sale"],
+exitDescs:["Maximum valuation through IPO","Sale to strategic buyer","Share sale on secondary market"],
+}};
+const t=k=>I[LANG][k]||k;
+
+function setLang(l){LANG=l;qa('.lb').forEach(b=>b.classList.toggle('on',b.textContent.includes(l.toUpperCase())));applyI18n();if(qs('#results').classList.contains('show'))renderResults();}
+
+function applyI18n(){
+  const tx=I[LANG];
+  qa('[data-i]').forEach(el=>{const k=el.getAttribute('data-i');if(tx[k]!==undefined){el.tagName==='OPTION'?el.textContent=tx[k]:el.innerHTML=tx[k];}});
+  qa('[data-ph]').forEach(el=>{const k=el.getAttribute('data-ph');if(tx[k])el.placeholder=tx[k];});
+  buildSelect('sector',[['',tx.sel],...tx.sectors]);
+  buildSelect('stage',[['',tx.sel],...tx.stages]);
+}
+function buildSelect(id,opts){const el=qs('#'+id);if(!el)return;const cur=el.value;el.innerHTML=opts.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');el.value=cur;}
+
+// ════════════════════════════════════════════════
+// THEME
+// ════════════════════════════════════════════════
+let isDark=true;
+function toggleTheme(){isDark=!isDark;document.documentElement.classList.toggle('light',!isDark);}
+
+// ════════════════════════════════════════════════
+// STEPPER
+// ════════════════════════════════════════════════
+let curStep=0;
+function goStep(n){curStep=n;qa('.pnl').forEach((p,i)=>p.classList.toggle('on',i===n));qa('.st-d').forEach((d,i)=>{d.classList.remove('on','done');if(i<n)d.classList.add('done');if(i===n)d.classList.add('on');});qa('.st-line').forEach((l,i)=>l.classList.toggle('done',i<n));}
+
+function gv(id){const raw=qs('#'+id)?.value||'';const clean=raw.replace(/[,\s]/g,'').replace(/\.(?=\d{3})/g,'');const v=parseFloat(clean);return isNaN(v)?null:v;}
+function gs(id){return qs('#'+id)?.value?.trim()||'';}
+
+// ════════════════════════════════════════════════
+// VALUATION ENGINE
+// ════════════════════════════════════════════════
+let analysisData=null;let aiText='';let aiDone=false;let savedForm={};let chatMessages=[];let chatBusy=false;
+
+function captureForm(){
+  const selText=id=>{const el=qs('#'+id);return el?.options[el.selectedIndex]?.text||'';};
+  savedForm={name:gs('compName'),sector:selText('sector'),sectorKey:gs('sector'),stage:selText('stage'),stageKey:gs('stage'),
+    country:gs('country'),desc:gs('compDesc'),founded:gv('founded'),employees:gv('employees'),
+    revenue:gv('revenue')||0,revGrowth:gv('revGrowth')||0,grossMargin:gv('grossMargin')||0,
+    netIncome:gv('netIncome')||0,ebitda:gv('ebitda')||0,cashFlow:gv('cashFlow')||0,
+    totalAssets:gv('totalAssets')||0,totalDebt:gv('totalDebt')||0,
+    lastRaise:gv('lastRaise')||0,lastValuation:gv('lastValuation')||0,
+    founderPct:gv('founderPct')||60,investorPct:gv('investorPct')||30,esopPct:gv('esopPct')||10,
+    newRaise:gv('newRaise')||0,discountRate:gv('discountRate')||15,termGrowth:gv('termGrowth')||3};
+}
+
+function compute(){
+  const f=savedForm;
+  const rev=f.revenue,rg=f.revGrowth/100,gm=f.grossMargin/100,ebitda=f.ebitda,fcf=f.cashFlow;
+  const wacc=f.discountRate/100,tg=f.termGrowth/100;
+
+  // 1. DCF Valuation
+  let dcf=0;
+  const projYears=5;let projFCF=fcf||rev*0.1;
+  for(let y=1;y<=projYears;y++){
+    projFCF*=(1+Math.min(rg,0.5));
+    dcf+=projFCF/Math.pow(1+wacc,y);
+  }
+  const terminalVal=(projFCF*(1+tg))/(wacc-tg+0.001);
+  dcf+=terminalVal/Math.pow(1+wacc,projYears);
+  dcf=Math.max(0,dcf);
+
+  // 2. Comparable Company (Revenue Multiple)
+  const sectorMultiples={tech:12,fintech:10,ecom:4,health:8,edu:6,food:3,logistics:4,energy:6,ai:15,gaming:5,social:8,marketplace:7,other:5};
+  const baseMultiple=sectorMultiples[f.sectorKey]||5;
+  const growthAdj=rg>1?2:rg>0.5?1.5:rg>0.2?1:rg>0?0.8:0.5;
+  const marginAdj=gm>0.7?1.3:gm>0.5?1.1:gm>0.3?1:0.8;
+  const revMultiple=baseMultiple*growthAdj*marginAdj;
+  const compVal=rev*revMultiple;
+
+  // 3. Revenue Multiple (simpler)
+  const simpleMultiple=rg>1?15:rg>0.5?10:rg>0.2?6:rg>0?4:2;
+  const revMulVal=rev*simpleMultiple;
+
+  // 4. Stage-Based
+  const stageVals={preseed:500000,seed:2500000,seriesA:12000000,seriesB:40000000,seriesC:100000000,growth:250000000,profitable:0};
+  let stageVal=stageVals[f.stageKey]||5000000;
+  if(f.stageKey==='profitable')stageVal=Math.max(rev*3,ebitda*8,5000000);
+  // Adjust by revenue
+  if(rev>0)stageVal=Math.max(stageVal,rev*3);
+
+  // Weighted average
+  const hasFinancials=rev>0;
+  let weightedVal;
+  if(hasFinancials){
+    weightedVal=dcf*0.3+compVal*0.3+revMulVal*0.2+stageVal*0.2;
+  }else{
+    weightedVal=stageVal;dcf=stageVal*0.8;
+  }
+  const valLow=Math.round(weightedVal*0.7);
+  const valHigh=Math.round(weightedVal*1.4);
+  const valMid=Math.round(weightedVal);
+
+  // Cap Table
+  const fPct=f.founderPct,iPct=f.investorPct,ePct=f.esopPct,otherPct=Math.max(0,100-fPct-iPct-ePct);
+  const newRaise=f.newRaise;
+  const preMoneyNew=valMid;
+  const postMoneyNew=preMoneyNew+newRaise;
+  const newInvPct=newRaise>0?(newRaise/postMoneyNew)*100:0;
+  const dilFactor=newRaise>0?preMoneyNew/postMoneyNew:1;
+  const capAfter={
+    founder:fPct*dilFactor,
+    investor:iPct*dilFactor,
+    esop:ePct*dilFactor,
+    newInv:newInvPct,
+    other:otherPct*dilFactor
+  };
+
+  // Investor Returns
+  const growthRate3yr=Math.min(rg||0.2,0.8);
+  const val3yr=valMid*Math.pow(1+growthRate3yr,3);
+  const invROI=newRaise>0?Math.round(((newInvPct/100*val3yr)-newRaise)/newRaise*100):0;
+  const invMultiple=newRaise>0?(newInvPct/100*val3yr)/newRaise:0;
+  const invIRR=newRaise>0?Math.round((Math.pow(invMultiple,1/3)-1)*100):0;
+  const invPayback=invMultiple>0?Math.round(3/invMultiple*12):0;
+
+  return{dcf:Math.round(dcf),compVal:Math.round(compVal),revMulVal:Math.round(revMulVal),stageVal:Math.round(stageVal),
+    valMid,valLow,valHigh,revMultiple:revMultiple.toFixed(1),simpleMultiple,
+    capBefore:{founder:fPct,investor:iPct,esop:ePct,other:otherPct},
+    capAfter,newInvPct:newInvPct.toFixed(1),dilFactor,
+    invROI,invIRR,invMultiple:invMultiple.toFixed(2),invPayback,val3yr:Math.round(val3yr)};
+}
+
+// ════════════════════════════════════════════════
+// AI CALL
+// ════════════════════════════════════════════════
+async function callAI(data){
+  aiDone=false;aiText='';
+  const f=savedForm;const L=LANG==='tr';
+  try{
+    const prompt=L?
+`Sen bir startup değerleme uzmanısın. Aşağıdaki verilere göre kapsamlı bir değerleme raporu yaz. Türkçe, düz metin, markdown kullanma.
+
+Şirket: ${f.name||'?'} | Sektör: ${f.sector} | Aşama: ${f.stage} | Ülke: ${f.country||'?'}
+Gelir: ${fc(f.revenue)} | Büyüme: %${f.revGrowth} | Brüt Marj: %${f.grossMargin}
+EBITDA: ${fc(f.ebitda)} | FCF: ${fc(f.cashFlow)} | Borç: ${fc(f.totalDebt)}
+Son Değerleme: ${fc(f.lastValuation)} | Çalışan: ${f.employees||'?'}
+
+Değerleme Sonuçları:
+DCF: ${fc(data.dcf)} | Comparable: ${fc(data.compVal)} | Rev Multiple: ${fc(data.revMulVal)} (${data.revMultiple}x)
+Stage-Based: ${fc(data.stageVal)} | Ağırlıklı Ortalama: ${fc(data.valMid)}
+Aralık: ${fc(data.valLow)} — ${fc(data.valHigh)}
+Yeni yatırım: ${fc(f.newRaise)} → Dilution: %${data.newInvPct}
+Yatırımcı ROI: %${data.invROI} | IRR: %${data.invIRR} | Çarpan: ${data.invMultiple}x
+
+Yaz:
+1. DEĞERLEME ÖZETİ (3 cümle): Şirketin genel değerlemesi hakkında yorum
+2. YÖNTEM ANALİZİ (3 cümle): Hangi değerleme yöntemi bu şirket için en uygun ve neden
+3. RİSK FAKTÖRLERİ (3 cümle): Değerlemeyi etkileyen ana riskler
+4. YATIRIMCI PERSPEKTİFİ (3 cümle): Bir yatırımcı bu şirkete neden yatırım yapmalı/yapmamalı
+5. DEĞER ARTIRMA ÖNERİLERİ (3-4 madde): Değerlemeyi artırmak için somut adımlar
+200-280 kelime. Profesyonel dil.`
+    :
+`You are a startup valuation expert. Write a comprehensive valuation report based on the data below. English, plain text, no markdown.
+
+Company: ${f.name||'?'} | Sector: ${f.sector} | Stage: ${f.stage} | Country: ${f.country||'?'}
+Revenue: ${fc(f.revenue)} | Growth: ${f.revGrowth}% | Gross Margin: ${f.grossMargin}%
+EBITDA: ${fc(f.ebitda)} | FCF: ${fc(f.cashFlow)} | Debt: ${fc(f.totalDebt)}
+Last Valuation: ${fc(f.lastValuation)} | Employees: ${f.employees||'?'}
+
+Valuation Results:
+DCF: ${fc(data.dcf)} | Comparable: ${fc(data.compVal)} | Rev Multiple: ${fc(data.revMulVal)} (${data.revMultiple}x)
+Stage-Based: ${fc(data.stageVal)} | Weighted Avg: ${fc(data.valMid)}
+Range: ${fc(data.valLow)} — ${fc(data.valHigh)}
+New raise: ${fc(f.newRaise)} → Dilution: ${data.newInvPct}%
+Investor ROI: ${data.invROI}% | IRR: ${data.invIRR}% | Multiple: ${data.invMultiple}x
+
+Write:
+1. VALUATION SUMMARY (3 sentences)
+2. METHOD ANALYSIS (3 sentences): Which method fits best and why
+3. RISK FACTORS (3 sentences)
+4. INVESTOR PERSPECTIVE (3 sentences): Why invest or not
+5. VALUE ENHANCEMENT TIPS (3-4 items)
+200-280 words. Professional language.`;
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
+    const d=await res.json();
+    const txt=d.content?.filter(c=>c.type==='text').map(c=>c.text).join('\n');
+    aiText=txt&&txt.length>50?txt:generateFallbackAI(data);
+  }catch(e){aiText=generateFallbackAI(data);}
+  aiDone=true;renderAISection();
+}
+
+function generateFallbackAI(data){
+  const f=savedForm;const L=LANG==='tr';
+  if(L)return`1. DEĞERLEME ÖZETİ\n${f.name||'Bu şirket'}, ${f.sector} sektöründe ${f.stage} aşamasında yer alıyor. Ağırlıklı ortalama değerleme ${fc(data.valMid)} olarak hesaplandı (aralık: ${fc(data.valLow)} — ${fc(data.valHigh)}). ${f.revenue>0?`Yıllık ${fc(f.revenue)} gelir ve %${f.revGrowth} büyüme oranı değerlemeyi destekliyor.`:'Gelir verisi sınırlı olduğundan stage-based değerleme ağırlıklı kullanıldı.'}\n\n2. YÖNTEM ANALİZİ\nDCF değerlemesi ${fc(data.dcf)}, Comparable Company ${fc(data.compVal)} sonuç verdi. ${data.revMultiple}x gelir çarpanı sektör ortalamasıyla uyumlu. ${f.revenue>0?'Revenue-based yöntemler daha güvenilir.':'Aşama bazlı değerleme bu aşamada en uygun yöntem.'}\n\n3. RİSK FAKTÖRLERİ\n${f.netIncome<0?'Şirket henüz kârlı değil — nakit yakma hızı dikkatle izlenmeli. ':''}${f.totalDebt>f.totalAssets*0.5?'Borç/varlık oranı yüksek. ':''}Pazar koşulları ve rekabet değerlemeyi etkileyebilir.\n\n4. YATIRIMCI PERSPEKTİFİ\n${data.invROI>50?'Yüksek getiri potansiyeli yatırımcılar için cazip.':'Getiri beklentisi orta düzeyde.'} %${data.newInvPct} dilution makul seviyede. ${data.invMultiple}x çarpan ${data.invMultiple>3?'güçlü':'kabul edilebilir'} bir getiri sunuyor.\n\n5. DEĞER ARTIRMA ÖNERİLERİ\n— Gelir büyümesini hızlandırın\n— Brüt marjı iyileştirin\n— Müşteri edinme maliyetini düşürün\n— Stratejik ortaklıklarla pazar genişletin`;
+  return`1. VALUATION SUMMARY\n${f.name||'This company'} in ${f.sector} at ${f.stage} stage. Weighted average valuation: ${fc(data.valMid)} (range: ${fc(data.valLow)} — ${fc(data.valHigh)}). ${f.revenue>0?`Annual revenue of ${fc(f.revenue)} with ${f.revGrowth}% growth supports the valuation.`:'Limited revenue data — stage-based valuation weighted heavily.'}\n\n2. METHOD ANALYSIS\nDCF yielded ${fc(data.dcf)}, Comparable Company ${fc(data.compVal)}. ${data.revMultiple}x revenue multiple aligns with sector averages.\n\n3. RISK FACTORS\n${f.netIncome<0?'Company not yet profitable — burn rate needs monitoring. ':''}Market conditions and competition may impact valuation.\n\n4. INVESTOR PERSPECTIVE\n${data.invROI>50?'High return potential attractive to investors.':'Moderate return expectations.'} ${data.newInvPct}% dilution is reasonable. ${data.invMultiple}x multiple offers ${data.invMultiple>3?'strong':'acceptable'} returns.\n\n5. VALUE ENHANCEMENT\n— Accelerate revenue growth\n— Improve gross margins\n— Reduce customer acquisition cost\n— Expand market through partnerships`;
+}
+
+function renderAISection(){const el=qs('#aiContent');if(el)el.innerHTML=aiDone?`<div class="ai-txt">${aiText}</div>`:`<div class="ai-loading"><div class="ai-spin"></div>${I[LANG].aiLoading}</div>`;}
+
+// ════════════════════════════════════════════════
+// AI CHAT
+// ════════════════════════════════════════════════
+async function sendChat(){
+  if(chatBusy)return;const input=qs('#chatInput');const q=input.value.trim();if(!q)return;
+  input.value='';chatBusy=true;
+  chatMessages.push({role:'user',text:q});renderChatMsgs();
+  const f=savedForm;const d=analysisData;const L=LANG==='tr';
+  const ctx=L?`Startup değerleme uzmanısın. ${f.name||'?'} — Değerleme: ${fc(d.valMid)}, Aralık: ${fc(d.valLow)}-${fc(d.valHigh)}. Gelir: ${fc(f.revenue)}, Büyüme: %${f.revGrowth}. DCF: ${fc(d.dcf)}, Comparable: ${fc(d.compVal)}. Dilution: %${d.newInvPct}. Kısa yanıt ver (3-4 cümle). Türkçe. Markdown yok.`
+    :`Startup valuation expert. ${f.name||'?'} — Valuation: ${fc(d.valMid)}, Range: ${fc(d.valLow)}-${fc(d.valHigh)}. Revenue: ${fc(f.revenue)}, Growth: ${f.revGrowth}%. DCF: ${fc(d.dcf)}, Comparable: ${fc(d.compVal)}. Dilution: ${d.newInvPct}%. Brief answer (3-4 sentences). No markdown.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:ctx+'\n\nQ: '+q}]})});
+    const data=await res.json();chatMessages.push({role:'bot',text:data.content?.filter(c=>c.type==='text').map(c=>c.text).join('\n')||'...'});
+  }catch(e){chatMessages.push({role:'bot',text:L?'Bağlantı hatası.':'Connection error.'});}
+  chatBusy=false;renderChatMsgs();
+}
+function askChat(q){qs('#chatInput').value=q;sendChat();}
+function renderChatMsgs(){const el=qs('#chatMsgs');if(!el)return;el.innerHTML=chatMessages.map(m=>`<div class="ai-msg ${m.role}">${m.text}</div>`).join('');el.scrollTop=el.scrollHeight;}
+
+// ════════════════════════════════════════════════
+// SENSITIVITY ANALYSIS
+// ════════════════════════════════════════════════
+function renderSensitivity(data){
+  const tx=I[LANG];const f=savedForm;
+  const baseVal=data.valMid;
+  const ids=['sensGrowth','sensMargin','sensWacc','sensTG'];
+  const defaults=[f.revGrowth,f.grossMargin,f.discountRate,f.termGrowth];
+  const ranges=[[0,200],[10,90],[8,40],[0,8]];
+
+  return `<div class="card"><div class="card-ac"></div>
+    <div class="card-t">🎚️ ${tx.sensTitle}</div><div class="card-sub">${tx.sensSub}</div>
+    ${tx.sensLabels.map((lb,i)=>`<div class="sens-row">
+      <div class="sens-label">${lb}</div>
+      <input class="sens-slider" type="range" id="${ids[i]}" min="${ranges[i][0]}" max="${ranges[i][1]}" value="${defaults[i]}" step="1" oninput="updateSensitivity()">
+      <div class="sens-val" id="${ids[i]}V">${defaults[i]}%</div>
+    </div>`).join('')}
+    <div class="sens-result" id="sensResult">
+      <div style="font-size:11px;color:var(--tx3)">${tx.sensResult}</div>
+      <div class="sr-val" id="sensVal">${fc(baseVal)}</div>
+      <div class="sr-delta" id="sensDelta" style="color:var(--tx3)">+0% ${tx.sensDelta}</div>
+    </div>
+  </div>`;
+}
+
+function updateSensitivity(){
+  const f=savedForm;const tx=I[LANG];
+  const g=+qs('#sensGrowth').value;const m=+qs('#sensMargin').value;
+  const w=+qs('#sensWacc').value;const tg=+qs('#sensTG').value;
+  qs('#sensGrowthV').textContent=g+'%';qs('#sensMarginV').textContent=m+'%';
+  qs('#sensWaccV').textContent=w+'%';qs('#sensTGV').textContent=tg+'%';
+
+  // Recompute DCF with adjusted params
+  const rev=f.revenue;const rg=g/100;const wacc=w/100;const tgr=tg/100;
+  let dcf=0;let projFCF=(f.cashFlow||rev*0.1);
+  for(let y=1;y<=5;y++){projFCF*=(1+Math.min(rg,0.5));dcf+=projFCF/Math.pow(1+wacc,y);}
+  const tv=(projFCF*(1+tgr))/(wacc-tgr+0.001);dcf+=tv/Math.pow(1+wacc,5);
+  dcf=Math.max(0,dcf);
+
+  // Adjusted weighted
+  const adj=Math.round(dcf*0.5+analysisData.compVal*0.3+analysisData.stageVal*0.2);
+  const base=analysisData.valMid;
+  const deltaPct=base>0?Math.round((adj-base)/base*100):0;
+  const color=deltaPct>=0?'var(--green)':'var(--rose)';
+
+  qs('#sensVal').textContent=fc(adj);qs('#sensVal').style.color=deltaPct>=0?'var(--gold)':'var(--rose)';
+  qs('#sensDelta').innerHTML=`<span style="color:${color}">${deltaPct>=0?'+':''}${deltaPct}%</span> ${tx.sensDelta}`;
+}
+
+// ════════════════════════════════════════════════
+// FUNDING SIMULATION
+// ════════════════════════════════════════════════
+function renderFundingSim(data){
+  const tx=I[LANG];const f=savedForm;
+  const rounds=[
+    {name:tx.fundRounds[0],raise:250000,valuation:1500000},
+    {name:tx.fundRounds[1],raise:1000000,valuation:5000000},
+    {name:tx.fundRounds[2],raise:5000000,valuation:25000000},
+    {name:tx.fundRounds[3],raise:15000000,valuation:80000000},
+    {name:tx.fundRounds[4],raise:40000000,valuation:250000000}
+  ];
+  // Adjust based on current stage
+  const stageIdx={preseed:0,seed:1,seriesA:2,seriesB:3,seriesC:4,growth:4,profitable:4}[f.stageKey]||1;
+  if(f.lastValuation>0)rounds[stageIdx].valuation=f.lastValuation;
+  if(f.lastRaise>0)rounds[stageIdx].raise=f.lastRaise;
+
+  let founderPct=f.founderPct||80;
+  const roundsHTML=rounds.map((r,i)=>{
+    const dilution=(r.raise/(r.valuation+r.raise))*100;
+    const prevFounder=founderPct;
+    founderPct*=(1-dilution/100);
+    const isActive=i<=stageIdx;
+    const isCurrent=i===stageIdx;
+    return `<div class="fund-round ${isActive?'active':''}">
+      <div class="fr-header">
+        <span class="fr-name" style="${isCurrent?'color:var(--gold)':''}">${isCurrent?'⭐ ':''} ${r.name}</span>
+        <span class="fr-val">${fc(r.valuation)}</span>
+      </div>
+      <div class="fr-details">
+        <div class="fr-detail"><div style="font-size:10px;color:var(--tx3)">${tx.fundRaise}</div><div class="fd-val">${fc(r.raise)}</div></div>
+        <div class="fr-detail"><div style="font-size:10px;color:var(--tx3)">${tx.fundDilution}</div><div class="fd-val" style="color:var(--rose)">-${dilution.toFixed(1)}%</div></div>
+        <div class="fr-detail"><div style="font-size:10px;color:var(--tx3)">${tx.fundFounder}</div><div class="fd-val" style="color:${founderPct>40?'var(--green)':founderPct>20?'var(--amber)':'var(--rose)'}">${founderPct.toFixed(1)}%</div></div>
+      </div>
+      <div class="fr-bar"><div class="fr-bar-fill" style="width:${founderPct}%;background:${founderPct>40?'var(--green)':founderPct>20?'var(--amber)':'var(--rose)'}"></div></div>
+    </div>`;
+  }).join('');
+
+  return `<div class="card"><div class="card-ac"></div>
+    <div class="card-t">🏦 ${tx.fundTitle}</div><div class="card-sub">${tx.fundSub}</div>
+    <div class="fund-timeline">${roundsHTML}</div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════
+// DCF PROJECTION CHART
+// ════════════════════════════════════════════════
+function renderDCFChart(data){
+  const tx=I[LANG];const f=savedForm;
+  const rg=Math.min(f.revGrowth/100,0.5);const wacc=f.discountRate/100;
+  const years=[];let rev=f.revenue;
+  // For DCF, if FCF is negative, use a projection that trends positive
+  let fcfVal=f.cashFlow>0?f.cashFlow:Math.max(f.revenue*0.05,f.ebitda*0.6);
+  for(let y=0;y<=5;y++){
+    if(y>0){rev*=(1+rg);fcfVal*=(1+rg);}
+    const disc=y>0?fcfVal/Math.pow(1+wacc,y):fcfVal;
+    years.push({y,rev:Math.round(rev),fcf:Math.round(fcfVal),disc:Math.round(disc)});
+  }
+  // Terminal value - ensure positive by using abs fcfVal
+  const termFCF=Math.abs(fcfVal);
+  const termVal=Math.round((termFCF*(1+f.termGrowth/100))/(Math.max(wacc-f.termGrowth/100,0.05)));
+
+  const maxV=Math.max(...years.map(y=>Math.max(y.rev,Math.abs(y.fcf),Math.abs(y.disc))));
+  const w=580,h=180,pad={l:50,r:20,t:15,b:30};
+  const cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+  const barW=cw/6/4;
+
+  let svg=`<svg viewBox="0 0 ${w} ${h+10}" style="width:100%">`;
+  for(let i=0;i<=4;i++){const y=pad.t+ch*(1-i/4);svg+=`<line x1="${pad.l}" y1="${y}" x2="${w-pad.r}" y2="${y}" stroke="var(--b1)" stroke-width="1"/>`;}
+  const colors=['#d4a853','#10b981','#3b82f6'];
+  years.forEach((yr,i)=>{
+    const gx=pad.l+i*(cw/6)+10;
+    [yr.rev,Math.abs(yr.fcf),Math.abs(yr.disc)].forEach((v,vi)=>{
+      const bh=maxV>0?(v/maxV)*ch:0;
+      svg+=`<rect x="${gx+vi*(barW+2)}" y="${pad.t+ch-bh}" width="${barW}" height="${Math.max(bh,2)}" rx="2" fill="${colors[vi]}" opacity=".8"/>`;
+    });
+    svg+=`<text x="${gx+barW*1.5}" y="${h}" text-anchor="middle" fill="var(--tx3)" font-size="10" font-family="Manrope">${LANG==='tr'?'Yıl':'Y'}${i}</text>`;
+  });
+  svg+=`</svg>`;
+
+  return `<div class="card"><div class="card-ac"></div>
+    <div class="card-t">📈 ${tx.dcfTitle}</div><div class="card-sub">${tx.dcfSub}</div>
+    ${svg}
+    <div style="display:flex;gap:14px;justify-content:center;margin-top:6px">
+      ${tx.dcfLabels.map((l,i)=>`<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--tx2)"><span style="width:10px;height:10px;border-radius:2px;background:${colors[i]}"></span>${l}</span>`).join('')}
+    </div>
+    <div style="text-align:center;margin-top:10px;padding:10px;background:var(--s2);border-radius:8px">
+      <span style="font-size:11px;color:var(--tx3)">${tx.dcfTerminal}:</span>
+      <span style="font-family:IBM Plex Mono;font-size:15px;font-weight:700;color:var(--gold);margin-left:6px">${fc(termVal)}</span>
+    </div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════
+// SECTOR BENCHMARK
+// ════════════════════════════════════════════════
+function renderBenchmark2(data){
+  const tx=I[LANG];const f=savedForm;
+  const sectorBench={
+    tech:{revMul:[5,20],evEbitda:[10,30],growth:[20,100],margin:[60,85]},
+    fintech:{revMul:[4,15],evEbitda:[8,25],growth:[30,120],margin:[50,80]},
+    ecom:{revMul:[1,6],evEbitda:[5,15],growth:[10,60],margin:[25,50]},
+    health:{revMul:[3,12],evEbitda:[8,20],growth:[15,80],margin:[50,75]},
+    ai:{revMul:[8,25],evEbitda:[15,40],growth:[40,150],margin:[65,90]},
+    saas:{revMul:[6,18],evEbitda:[12,35],growth:[25,100],margin:[70,90]},
+  };
+  const bench=sectorBench[f.sectorKey]||{revMul:[3,10],evEbitda:[6,18],growth:[10,50],margin:[30,65]};
+  const yourVals=[
+    parseFloat(data.revMultiple),
+    f.ebitda>0?Math.round(data.valMid/f.ebitda):0,
+    f.revGrowth,
+    f.grossMargin
+  ];
+  const ranges=[bench.revMul,bench.evEbitda,bench.growth,bench.margin];
+  const maxes=[30,50,200,100];
+
+  return `<div class="card"><div class="card-ac"></div>
+    <div class="card-t">📊 ${tx.benchTitle2}</div><div class="card-sub">${tx.benchSub2}</div>
+    ${tx.benchMetrics.map((lb,i)=>{
+      const rMin=ranges[i][0],rMax=ranges[i][1],you=yourVals[i],mx=maxes[i];
+      const rMinPct=rMin/mx*100,rMaxPct=rMax/mx*100,youPct=Math.min(you/mx*100,100);
+      const inRange=you>=rMin&&you<=rMax;
+      return `<div class="bench-row2">
+        <div class="bench-lbl2">${lb}</div>
+        <div class="bench-track2">
+          <div class="bench-range" style="left:${rMinPct}%;width:${rMaxPct-rMinPct}%;background:var(--gold)"></div>
+          <div class="bench-dot" style="left:${youPct}%;background:${inRange?'var(--green)':'var(--rose)'}"></div>
+        </div>
+        <div style="min-width:40px;font-family:IBM Plex Mono;font-size:11px;font-weight:600;color:${inRange?'var(--green)':'var(--rose)'}">${you}</div>
+      </div>`;
+    }).join('')}
+    <div style="display:flex;gap:16px;justify-content:center;margin-top:10px;font-size:11px;color:var(--tx3)">
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);vertical-align:middle;margin-right:4px"></span>${tx.benchYou2}</span>
+      <span><span style="display:inline-block;width:30px;height:8px;border-radius:3px;background:var(--gold);opacity:.25;vertical-align:middle;margin-right:4px"></span>${tx.benchRange}</span>
+    </div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════
+// EXIT SCENARIO ANALYSIS
+// ════════════════════════════════════════════════
+function renderExitScenarios(data){
+  const tx=I[LANG];const f=savedForm;
+  const baseVal=data.valMid;const rg=Math.min(f.revGrowth/100||0.2,0.8);
+  const scenarios=[
+    {icon:'🏛️',multiplier:rg>0.5?5:rg>0.2?3.5:2.5,timeline:LANG==='tr'?'5-7 yıl':'5-7 years',color:'var(--gold)'},
+    {icon:'🤝',multiplier:rg>0.5?3.5:rg>0.2?2.5:1.8,timeline:LANG==='tr'?'3-5 yıl':'3-5 years',color:'var(--green)'},
+    {icon:'📄',multiplier:rg>0.5?2:rg>0.2?1.5:1.2,timeline:LANG==='tr'?'2-3 yıl':'2-3 years',color:'var(--sky)'}
+  ];
+
+  return `<div class="card"><div class="card-ac"></div>
+    <div class="card-t">🚪 ${tx.exitTitle}</div><div class="card-sub">${tx.exitSub}</div>
+    <div class="exit-grid">
+      ${scenarios.map((sc,i)=>{
+        const exitVal=Math.round(baseVal*sc.multiplier);
+        const roi=f.newRaise>0?Math.round(((data.newInvPct/100*exitVal)-f.newRaise)/f.newRaise*100):0;
+        const founderVal=Math.round(exitVal*data.capAfter.founder/100);
+        return `<div class="exit-card">
+          <div class="ex-icon">${sc.icon}</div>
+          <div class="ex-name">${tx.exitNames[i]}</div>
+          <div class="ex-val" style="color:${sc.color}">${fc(exitVal)}</div>
+          <div class="ex-detail">${tx.exitDescs[i]}<br>⏱️ ${sc.timeline}</div>
+          <div class="ex-detail" style="margin-top:6px">
+            ${LANG==='tr'?'Kurucu payı':'Founder share'}: <strong style="color:var(--tx)">${fc(founderVal)}</strong>
+          </div>
+          <div class="ex-roi" style="background:${roi>100?'rgba(16,185,129,.1)':'rgba(245,158,11,.1)'};color:${roi>100?'var(--green)':'var(--amber)'}">
+            ROI: ${roi>0?'+':''}${roi}%  •  ${sc.multiplier}x
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════
+function renderResults(){
+  const d=analysisData;if(!d)return;const tx=I[LANG];const f=savedForm;
+  const vc=v=>v>=0?'var(--green)':'var(--rose)';
+
+  // Pie chart SVG
+  function pieChart(data,size=160){
+    const colors=['#d4a853','#10b981','#3b82f6','#f43f5e','#8b5cf6'];
+    let cumPct=0;let paths='';
+    data.forEach((d,i)=>{if(d.pct<=0)return;
+      const start=cumPct/100*360-90;const end=(cumPct+d.pct)/100*360-90;
+      const r=size/2-4;const cx=size/2;const cy=size/2;
+      const x1=cx+r*Math.cos(start*Math.PI/180);const y1=cy+r*Math.sin(start*Math.PI/180);
+      const x2=cx+r*Math.cos(end*Math.PI/180);const y2=cy+r*Math.sin(end*Math.PI/180);
+      const large=d.pct>50?1:0;
+      paths+=`<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} Z" fill="${colors[i%colors.length]}" opacity=".85"/>`;
+      cumPct+=d.pct;
+    });
+    return `<svg viewBox="0 0 ${size} ${size}" style="width:${size}px;height:${size}px">${paths}</svg>`;
+  }
+
+  const capBeforeData=[{lbl:tx.capFounder,pct:d.capBefore.founder},{lbl:tx.capInvestor,pct:d.capBefore.investor},{lbl:tx.capEsop,pct:d.capBefore.esop}];
+  if(d.capBefore.other>0)capBeforeData.push({lbl:'Other',pct:d.capBefore.other});
+  const capAfterData=[{lbl:tx.capFounder,pct:d.capAfter.founder},{lbl:tx.capInvestor,pct:d.capAfter.investor},{lbl:tx.capEsop,pct:d.capAfter.esop},{lbl:tx.capNew,pct:d.capAfter.newInv}];
+  const pieColors=['#d4a853','#10b981','#3b82f6','#f43f5e','#8b5cf6'];
+
+  const el=qs('#results');
+  el.innerHTML=`
+  <!-- HERO -->
+  <div class="card hero"><div class="card-ac"></div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-bottom:6px">${tx.rpt}</div>
+    <div class="hero-name">${f.name||'—'}</div>
+    <div class="hero-meta">${f.sector} • ${f.stage} • ${f.country||'—'}</div>
+    <div class="val-display">
+      <div style="font-size:12px;color:var(--tx3);margin-bottom:4px">${tx.valTitle}</div>
+      <div class="val-main">${fc(d.valMid)}</div>
+      <div class="val-range">${tx.valRange}: <span>${fc(d.valLow)}</span> — <span>${fc(d.valHigh)}</span></div>
+    </div>
+  </div>
+
+  <!-- METHODS -->
+  <div class="card"><div class="card-ac"></div><div class="card-t">📐 ${tx.methodsTitle}</div>
+    <div class="method-grid">
+      ${[d.dcf,d.compVal,d.revMulVal,d.stageVal].map((v,i)=>`<div class="m-card">
+        <div class="m-icon">${['📉','🏢','📊','🎯'][i]}</div>
+        <div class="m-name">${tx.mNames[i]}</div>
+        <div class="m-val" style="color:var(--gold)">${fc(v)}</div>
+        <div class="m-desc">${tx.mDescs[i]}${i===2?' ('+d.revMultiple+'x)':''}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- CAP TABLE -->
+  <div class="g2">
+    <div class="card"><div class="card-ac"></div><div class="card-t">📊 ${tx.capTitle} — ${tx.capBefore}</div>
+      <div style="display:flex;align-items:center;gap:20px;justify-content:center">
+        ${pieChart(capBeforeData)}
+        <div class="pie-legend" style="flex-direction:column">
+          ${capBeforeData.map((d,i)=>`<div class="pie-legend-item"><div class="pl-dot" style="background:${pieColors[i]}"></div>${d.lbl}: ${d.pct.toFixed(1)}%</div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="card"><div class="card-ac"></div><div class="card-t">📊 ${tx.capTitle} — ${tx.capAfter}</div>
+      <div style="display:flex;align-items:center;gap:20px;justify-content:center">
+        ${pieChart(capAfterData)}
+        <div class="pie-legend" style="flex-direction:column">
+          ${capAfterData.map((d,i)=>`<div class="pie-legend-item"><div class="pl-dot" style="background:${pieColors[i]}"></div>${d.lbl}: ${d.pct.toFixed(1)}%</div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DILUTION -->
+  <div class="card"><div class="card-ac"></div><div class="card-t">💧 ${tx.dilTitle}</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center">
+      <div style="padding:14px;background:var(--s2);border-radius:10px">
+        <div style="font-size:11px;color:var(--tx3)">${tx.dilBefore}</div>
+        <div style="font-family:IBM Plex Mono;font-size:1.3rem;font-weight:700;color:var(--gold)">${f.founderPct}%</div>
+        <div style="font-size:10px;color:var(--tx3)">${tx.capFounder}</div>
+      </div>
+      <div style="padding:14px;background:var(--s2);border-radius:10px">
+        <div style="font-size:11px;color:var(--tx3)">${tx.dilAfter}</div>
+        <div style="font-family:IBM Plex Mono;font-size:1.3rem;font-weight:700;color:var(--rose)">${d.capAfter.founder.toFixed(1)}%</div>
+        <div style="font-size:10px;color:var(--tx3)">${tx.capFounder}</div>
+      </div>
+      <div style="padding:14px;background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.15);border-radius:10px">
+        <div style="font-size:11px;color:var(--tx3)">${tx.dilLost}</div>
+        <div style="font-family:IBM Plex Mono;font-size:1.3rem;font-weight:700;color:var(--rose)">-${(f.founderPct-d.capAfter.founder).toFixed(1)}%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVESTOR RETURNS -->
+  <div class="card"><div class="card-ac"></div><div class="card-t">💰 ${tx.invTitle}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px">
+      ${[[tx.invROI,d.invROI+'%',d.invROI>50?'var(--green)':'var(--amber)'],[tx.invIRR,d.invIRR+'%',d.invIRR>30?'var(--green)':'var(--amber)'],[tx.invMultiple,d.invMultiple+'x',d.invMultiple>3?'var(--green)':'var(--amber)'],[tx.invPayback,d.invPayback+' mo','var(--sky)']].map(([lbl,val,c])=>`
+        <div style="background:var(--s2);border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--tx3)">${lbl}</div>
+          <div style="font-family:IBM Plex Mono;font-size:1.2rem;font-weight:700;color:${c}">${val}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- SENSITIVITY ANALYSIS -->
+  ${renderSensitivity(d)}
+
+  <!-- DCF PROJECTION CHART -->
+  ${renderDCFChart(d)}
+
+  <!-- EXIT SCENARIOS -->
+  ${renderExitScenarios(d)}
+
+  <!-- FUNDING SIMULATION -->
+  ${renderFundingSim(d)}
+
+  <!-- SECTOR BENCHMARK -->
+  ${renderBenchmark2(d)}
+
+  <!-- AI REPORT -->
+  <div class="ai-b" id="aiSection">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--g1)"></div>
+    <div class="card-t">🤖 ${tx.aiTitle}</div>
+    <div class="card-sub">${tx.aiSub}</div>
+    <div id="aiContent">${aiDone?`<div class="ai-txt">${aiText}</div>`:`<div class="ai-loading"><div class="ai-spin"></div>${tx.aiLoading}</div>`}</div>
+    <!-- Chat -->
+    <div class="ai-chat">
+      <div style="font-size:13px;font-weight:700;margin-bottom:6px">💬 ${tx.aiChatTitle}</div>
+      <div class="ai-chat-suggest">${tx.aiChatSuggestions.map(s=>`<button onclick="askChat('${s.replace(/'/g,"\\'")}')">${s}</button>`).join('')}</div>
+      <div class="ai-chat-messages" id="chatMsgs"></div>
+      <div class="ai-chat-input"><input id="chatInput" placeholder="${tx.aiChatPh}" onkeydown="if(event.key==='Enter')sendChat()"><button onclick="sendChat()">${tx.aiChatSend}</button></div>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="acts">
+    <button class="btn btn-n" onclick="window.print()">📥 ${tx.btnExport}</button>
+    <button class="btn btn-b" onclick="resetAll()">🔄 ${tx.btnReset}</button>
+  </div>
+  <div class="ftr"><p>${tx.footer1}</p><p style="margin-top:3px">${tx.footer2}</p></div>`;
+
+  el.classList.add('show');
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ════════════════════════════════════════════════
+// RUN ANALYSIS
+// ════════════════════════════════════════════════
+async function runAnalysis(){
+  const ld=qs('#loading');const tx=I[LANG];
+  qs('#ldSteps').innerHTML=tx.ls.map((s,i)=>`<div class="ls" id="ls${i}"><span class="ck">✓</span>${s}</div>`).join('');
+  ld.classList.add('show');
+  for(let i=0;i<tx.ls.length;i++){await new Promise(r=>setTimeout(r,300+Math.random()*250));qs('#ls'+i)?.classList.add('ok');}
+  await new Promise(r=>setTimeout(r,200));
+  captureForm();
+  analysisData=compute();
+  ld.classList.remove('show');
+  qa('.pnl').forEach(p=>p.classList.remove('on'));
+  qs('#hdrBlock').style.display='none';
+  qs('#stepperBlock').style.display='none';
+  renderResults();
+  callAI(analysisData);
+}
+
+function resetAll(){
+  qs('#results').classList.remove('show');qs('#results').innerHTML='';
+  qs('#hdrBlock').style.display='';qs('#stepperBlock').style.display='flex';
+  aiText='';aiDone=false;analysisData=null;chatMessages=[];
+  goStep(0);window.scrollTo({top:0,behavior:'smooth'});
+}
+
+applyI18n();
+</script>
+</body>
+</html>
